@@ -26,6 +26,18 @@ services:
     image: academiaonline/dockercoins:2021-10-hasher
     networks:
       - hasher
+  redis:
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    expose:
+      - 6379
+    image: library/redis:alpine
+    networks:
+      - redis
+    volumes:
+      - redis:/data/
   rng:
     command:
       - rng.py
@@ -44,24 +56,13 @@ services:
     image: academiaonline/dockercoins:2021-10-rng
     networks:
       - rng
-  worker:
-    command:
-      - worker.py
-    configs:
+    volumes:
       - 
-        mode: 0400
-        source: worker
-        target: /worker.py
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
-    entrypoint: python
-    image: academiaonline/dockercoins:2021-10-worker
-    networks:
-      - hasher
-      - redis
-      - rng
+        target: /usr/local/lib/python3.10/__pycache__/
+        type: tmpfs
+      - 
+        target: /usr/local/lib/python3.10/http/__pycache__/
+        type: tmpfs
   webui:
     command:
       - webui.js
@@ -82,18 +83,24 @@ services:
       - redis
     ports:
       - 8080
-  redis:
+  worker:
+    command:
+      - worker.py
+    configs:
+      - 
+        mode: 0400
+        source: worker
+        target: /worker.py
     deploy:
       placement:
         constraints:
           - node.role == worker
-    expose:
-      - 6379
-    image: library/redis:alpine
+    entrypoint: python
+    image: academiaonline/dockercoins:2021-10-worker
     networks:
+      - hasher
       - redis
-    volumes:
-      - redis:/data/
+      - rng
 version: '3.8'
 volumes:
   redis:
