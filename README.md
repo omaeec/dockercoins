@@ -43,5 +43,5 @@ do
 done
 ```
 ```
-docker run --detach --entrypoint node --name webui --network redis --volume ${PWD}/webui/webui.js:/webui.js:ro --volume ${PWD}/webui/files/:/files/:ro ${github_username}/${github_repository}:${github_branch}-webui webui.js
+docker run --detach --entrypoint node --name webui --network redis --publish 8080 --volume ${PWD}/webui/webui.js:/webui.js:ro --volume ${PWD}/webui/files/:/files/:ro ${github_username}/${github_repository}:${github_branch}-webui webui.js
 ```
