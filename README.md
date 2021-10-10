@@ -33,3 +33,6 @@ docker run --detach --entrypoint ruby --name hasher --network hasher --volume ${
 ```
 docker run --detach --entrypoint python --name rng --network rng --volume ${PWD}/rng/rng.py:/rng.py:ro ${github_username}/${github_repository}:${github_branch}-rng rng.py
 ```
+```
+docker run --detach --entrypoint python --name worker --network redis --volume ${PWD}/worker/worker.py:/worker.py:ro ${github_username}/${github_repository}:${github_branch}-worker worker.py
+```
