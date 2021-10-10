@@ -62,4 +62,24 @@ services:
       - hasher
       - redis
       - rng
+  webui:
+    command:
+      - webui.js
+    configs:
+      - 
+        mode: 0400
+        source: webui
+        target: /webui.js
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    entrypoint: node
+    expose:
+      - 8080
+    image: academiaonline/dockercoins:2021-10-webui
+    networks:
+      - redis
+    ports:
+      - 8080
 version: '3.8'
