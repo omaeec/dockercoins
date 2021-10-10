@@ -1,0 +1,29 @@
+configs:
+  hasher:
+    file: ./hasher/hasher.rb
+  rng:
+    file: ./rng/rng.py
+  worker:
+    file: ./worker/worker.py
+  webui:
+    file: ./webui/webui.js
+services:
+  hasher:
+    command:
+      - hasher.rb
+    configs:
+      - 
+        mode: 0400
+        source: hasher
+        target: /hasher.rb
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    entrypoint: ruby
+    expose:
+      - 8080
+    image: academiaonline/dockercoins:2021-10-hasher
+    networks:
+      - hasher
+version: '3.8'
