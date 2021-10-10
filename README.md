@@ -25,16 +25,16 @@ done
 docker volume create redis
 ```
 ```
-docker run --detach --name redis --network redis --volume redis:/data:rw library/redis:alpine
+docker run --detach --name redis --network redis --restart always --volume redis:/data:rw library/redis:alpine
 ```
 ```
-docker run --detach --entrypoint ruby --name hasher --network hasher --volume ${PWD}/hasher/hasher.rb:/hasher.rb:ro ${github_username}/${github_repository}:${github_branch}-hasher hasher.rb
+docker run --detach --entrypoint ruby --name hasher --network hasher --restart always --volume ${PWD}/hasher/hasher.rb:/hasher.rb:ro ${github_username}/${github_repository}:${github_branch}-hasher hasher.rb
 ```
 ```
-docker run --detach --entrypoint python --name rng --network rng --volume ${PWD}/rng/rng.py:/rng.py:ro ${github_username}/${github_repository}:${github_branch}-rng rng.py
+docker run --detach --entrypoint python --name rng --network rng --restart always --volume ${PWD}/rng/rng.py:/rng.py:ro ${github_username}/${github_repository}:${github_branch}-rng rng.py
 ```
 ```
-docker run --detach --entrypoint python --name worker --network redis --volume ${PWD}/worker/worker.py:/worker.py:ro ${github_username}/${github_repository}:${github_branch}-worker worker.py
+docker run --detach --entrypoint python --name worker --network redis --restart always --volume ${PWD}/worker/worker.py:/worker.py:ro ${github_username}/${github_repository}:${github_branch}-worker worker.py
 ```
 ```
 for network in hasher rng
@@ -43,5 +43,5 @@ do
 done
 ```
 ```
-docker run --detach --entrypoint node --name webui --network redis --publish 8080 --volume ${PWD}/webui/webui.js:/webui.js:ro --volume ${PWD}/webui/files/:/files/:ro ${github_username}/${github_repository}:${github_branch}-webui webui.js
+docker run --detach --entrypoint node --name webui --network redis --publish 8080 --restart always --volume ${PWD}/webui/webui.js:/webui.js:ro --volume ${PWD}/webui/files/:/files/:ro ${github_username}/${github_repository}:${github_branch}-webui webui.js
 ```
