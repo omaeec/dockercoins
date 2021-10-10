@@ -82,4 +82,18 @@ services:
       - redis
     ports:
       - 8080
+  redis:
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    expose:
+      - 6379
+    image: library/redis:alpine
+    networks:
+      - redis
+    volumes:
+      - redis:/data/
 version: '3.8'
+volumes:
+  redis:
