@@ -44,4 +44,22 @@ services:
     image: academiaonline/dockercoins:2021-10-rng
     networks:
       - rng
+  worker:
+    command:
+      - worker.py
+    configs:
+      - 
+        mode: 0400
+        source: worker
+        target: /worker.py
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    entrypoint: python
+    image: academiaonline/dockercoins:2021-10-worker
+    networks:
+      - hasher
+      - redis
+      - rng
 version: '3.8'
