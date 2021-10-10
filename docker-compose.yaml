@@ -90,6 +90,8 @@ services:
       - redis
     ports:
       - 8080
+    volumes:
+      - /media/files/:/files/:ro
   worker:
     command:
       - worker.py
