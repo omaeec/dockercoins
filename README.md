@@ -25,7 +25,7 @@ done
 docker volume create redis
 ```
 ```
-docker run --detach --name redis --network redis --read-only --restart always --volume redis:/data:rw library/redis:alpine
+docker run --detach --name redis --network redis --read-only --restart always --volume redis:/data/:rw library/redis:alpine
 ```
 ```
 docker run --detach --entrypoint ruby --name hasher --network hasher --read-only --restart always --volume ${PWD}/hasher/hasher.rb:/hasher.rb:ro ${github_username}/${github_repository}:${github_branch}-hasher hasher.rb
