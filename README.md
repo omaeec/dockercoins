@@ -34,7 +34,7 @@ docker run --detach --entrypoint ruby --name hasher --network hasher --restart a
 docker run --detach --entrypoint python --name rng --network rng --restart always --volume :/usr/local/lib/python3.10/http/__pycache__/:rw --volume :/usr/local/lib/python3.10/__pycache__/:rw --volume ${PWD}/rng/rng.py:/rng.py:ro ${github_username}/${github_repository}:${github_branch}-rng rng.py
 ```
 ```
-docker run --detach --entrypoint python --name worker --network redis --restart always --volume ${PWD}/worker/worker.py:/worker.py:ro ${github_username}/${github_repository}:${github_branch}-worker worker.py
+docker run --detach --entrypoint python --name worker --network redis --restart always --volume :/usr/local/lib/python3.10/distutils/__pycache__/:rw --volume ${PWD}/worker/worker.py:/worker.py:ro ${github_username}/${github_repository}:${github_branch}-worker worker.py
 ```
 ```
 for network in hasher rng
