@@ -36,3 +36,9 @@ docker run --detach --entrypoint python --name rng --network rng --volume ${PWD}
 ```
 docker run --detach --entrypoint python --name worker --network redis --volume ${PWD}/worker/worker.py:/worker.py:ro ${github_username}/${github_repository}:${github_branch}-worker worker.py
 ```
+```
+for network in hasher rng
+do
+  docker network connect ${network} worker
+done
+```
