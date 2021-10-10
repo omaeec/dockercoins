@@ -101,6 +101,10 @@ services:
       - hasher
       - redis
       - rng
+    volumes:
+      - 
+        target: /usr/local/lib/python3.10/distutils/__pycache__/
+        type: tmpfs
 version: '3.8'
 volumes:
   redis:
