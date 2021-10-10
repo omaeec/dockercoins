@@ -26,4 +26,22 @@ services:
     image: academiaonline/dockercoins:2021-10-hasher
     networks:
       - hasher
+  rng:
+    command:
+      - rng.py
+    configs:
+      - 
+        mode: 0400
+        source: rng
+        target: /rng.py
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+    entrypoint: python
+    expose:
+      - 8080
+    image: academiaonline/dockercoins:2021-10-rng
+    networks:
+      - rng
 version: '3.8'
