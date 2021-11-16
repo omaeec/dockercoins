@@ -1,3 +1,12 @@
+# github_branch=2021-10
+# github_repository=dockercoins
+# github_username=academiaonline
+# git clone https://github.com/${github_username}/${github_repository}
+# cd ${github_repository}/
+# git checkout ${github_branch}
+# docker swarm init
+# docker stack deploy --compose-file docker-compose.yaml ${github_repository}
+
 configs:
   hasher:
     file: ./hasher/hasher.rb
