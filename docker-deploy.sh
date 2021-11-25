@@ -47,3 +47,44 @@ volume_path=/hasher/hasher.rb
 volume_ops=ro
 workdir=/hasher/
 docker run -d -e GEM_HOME -e BUNDLE_SILENCE_ROOT_WARNING -e BUNDLE_APP_CONFIG -e PATH --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
+
+cmd=rng.py
+entrypoint=/usr/local/bin/python
+image=rng
+name=rng
+network=rng
+restart=always
+user=nobody
+volume=${PWD}/rng/rng.py
+volume_path=/rng/rng.py
+volume_ops=ro
+volume_tmp_0=/usr/local/lib/python3.10/collections/__pycache__
+volume_tmp_1=/usr/local/lib/python3.10/encodings/__pycache__
+volume_tmp_2=/usr/local/lib/python3.10/importlib/__pycache__
+volume_tmp_3=/usr/local/lib/python3.10/__pycache__
+workdir=/rng/
+docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -v ${volume_tmp_0} -v ${volume_tmp_1} -v ${volume_tmp_2} -v ${volume_tmp_3} -w ${workdir} ${image}:${tag} ${cmd}
+
+cmd=worker.py
+entrypoint=/usr/local/bin/python
+image=worker
+name=worker
+network=redis
+restart=always
+user=nobody
+volume=${PWD}/worker/worker.py
+volume_path=/worker/worker.py
+volume_ops=ro
+volume_tmp_0=/usr/local/lib/python3.10/collections/__pycache__
+volume_tmp_1=/usr/local/lib/python3.10/encodings/__pycache__
+volume_tmp_2=/usr/local/lib/python3.10/importlib/__pycache__
+volume_tmp_3=/usr/local/lib/python3.10/__pycache__
+workdir=/worker/
+docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -v ${volume_tmp_0} -v ${volume_tmp_1} -v ${volume_tmp_2} -v ${volume_tmp_3} -w ${workdir} ${image}:${tag} ${cmd}
+
+for network in hasher rng
+do
+docker network connect ${network} worker
+done 
+
+
