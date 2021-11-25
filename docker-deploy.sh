@@ -30,3 +30,16 @@ volume_path=/data/
 volume_ops=rw
 workdir=/data/
 docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
+
+cmd=hasher.rb
+entrypoint=/usr/local/bin/ruby
+image=hasher
+name=hasher
+network=hasher
+restart=always
+user=nobody
+volume=${PWD}/hasher/hasher.rb
+volume_path=/hasher/hasher.rb
+volume_ops=ro
+workdir=/hasher/
+docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
