@@ -13,7 +13,7 @@ do
 docker build -t ${app}:${tag} ${app}
 done
 
-for app in hasher redis rng
+for app in hasher rng webui worker
 do 
 docker network create ${app}
 done
@@ -22,7 +22,7 @@ cmd=redis-server
 entrypoint=/usr/local/bin/docker-entrypoint.sh
 image=redis
 name=redis
-network=redis
+network=webui
 restart=always
 user=nobody
 volume=redis
@@ -30,6 +30,8 @@ volume_path=/data/
 volume_ops=rw
 workdir=/data/
 docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
+
+docker network connect worker redis
 
 GEM_HOME=/usr/local/bundle
 BUNDLE_SILENCE_ROOT_WARNING=1
@@ -69,7 +71,7 @@ cmd=worker.py
 entrypoint=/usr/local/bin/python
 image=worker
 name=worker
-network=redis
+network=worker
 restart=always
 user=nobody
 volume=${PWD}/worker/worker.py
