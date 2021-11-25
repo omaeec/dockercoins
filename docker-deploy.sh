@@ -10,7 +10,7 @@ cd ${github_repo}
 
 for app in hasher redis rng webui worker
 do
-docker build --no-cache -t ${app}:${tag} ${app}
+docker build -t ${app}:${tag} ${app}
 done
 
 for app in hasher redis rng
