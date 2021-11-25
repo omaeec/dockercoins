@@ -31,6 +31,10 @@ volume_ops=rw
 workdir=/data/
 docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
 
+GEM_HOME=/usr/local/bundle
+BUNDLE_SILENCE_ROOT_WARNING=1
+BUNDLE_APP_CONFIG="$GEM_HOME"
+PATH=$GEM_HOME/bin:$PATH
 cmd=hasher.rb
 entrypoint=/usr/local/bin/ruby
 image=hasher
@@ -42,4 +46,4 @@ volume=${PWD}/hasher/hasher.rb
 volume_path=/hasher/hasher.rb
 volume_ops=ro
 workdir=/hasher/
-docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
+docker run -d -e GEM_HOME -e BUNDLE_SILENCE_ROOT_WARNING -e BUNDLE_APP_CONFIG -e PATH --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
