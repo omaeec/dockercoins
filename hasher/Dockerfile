@@ -1,4 +1,5 @@
 FROM ruby:alpine
+RUN apk add build-base
 RUN gem install sinatra
 
 FROM scratch
