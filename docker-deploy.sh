@@ -1,8 +1,12 @@
 #!/bin/sh
 
+branch=2021-11-axia
+github_repo=dockercoins
+github_user=academiaonline-org
 tag=latest
 
-git clone --branch 2021-11-axia --single-branch https://github.com/academiaonline-org/dockercoins
+git clone --branch ${branch} --single-branch https://github.com/${github_user}/${github_repo}
+cd ${github_repo}
 
 for app in hasher redis rng webui worker
 do
