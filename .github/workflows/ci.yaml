@@ -1,9 +1,12 @@
 name: CI
+
 on:
   push:
     branches:
       - 2021-11-axia
+      
 jobs:
+
   docker:
     env:
       branch: 2021-11-axia
@@ -144,7 +147,7 @@ jobs:
           curl localhost:8080/index.html --silent | grep DockerCoin.Miner.WebUI && break
           sleep 10
           done
-
+          
   swarm:
     env:
       branch: 2021-11-axia
@@ -183,5 +186,53 @@ jobs:
           curl localhost:8080/index.html --silent | grep DockerCoin.Miner.WebUI && break
           sleep 10
           done
-
-#kubernetes:
+          
+  kubernetes:
+    env:
+      branch: 2021-11-axia
+      github_repo: dockercoins
+      github_user: academiaonline-org
+      tag: latest
+    runs-on: ubuntu-18.04
+    steps:
+      - 
+        name: checkout
+        uses: actions/checkout@v2
+      -
+        name: build
+        run: |
+          for app in hasher redis rng worker
+          do
+          docker build -t ${app}:${tag} ${app}
+          done
+      -
+        name: build-webui
+        run: |
+          app=webui
+          docker pull academiaonline/dockercoins:2021-10-webui
+          docker tag academiaonline/dockercoins:2021-10-webui ${app}:${tag}
+      -
+        name: kube-init
+        run: |
+          uuid=$( md5sum $compose | cut -d\  -f1 )                               ;
+          git clone --single-branch -b v1.2                                      \
+            https://github.com/academiaonline/kubernetes $uuid                   ;
+          path=$uuid/bin/cluster/ubuntu18/install-docker-kubelet.sh              ;
+          source $path                                                           ;
+          path=$uuid/bin/cluster/ubuntu18/install-leader.sh                      ;
+          source $path                                                           ;
+          master=$( kubectl get node | grep master | awk '{ print $1 }' )        ;
+          kubectl taint node $master node-role.kubernetes.io/master:NoSchedule-  ;
+          rm -rf $uuid                                                           ;        
+      -
+        name: kube-deploy
+        run: kubectl apply -f kube-compose.yaml 
+      -
+        name: test
+        run: |
+          ip=$( ip route | grep default | awk '{ print $9 }' )
+          while true
+          do
+          curl ${ip}:30080/index.html --silent | grep DockerCoin.Miner.WebUI && break
+          sleep 10
+          done
