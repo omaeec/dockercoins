@@ -8,10 +8,15 @@ tag=latest
 git clone --branch ${branch} --single-branch https://github.com/${github_user}/${github_repo}
 cd ${github_repo}
 
-for app in hasher redis rng webui worker
+#for app in hasher redis rng webui worker
+for app in hasher redis rng worker
 do
 docker build -t ${app}:${tag} ${app}
 done
+
+app=webui
+docker pull academiaonline/dockercoins:2021-10-webui
+docker tag academiaonline/dockercoins:2021-10-webui ${app}:${tag}
 
 for app in hasher rng webui worker
 do 
@@ -94,6 +99,8 @@ entrypoint=/usr/local/bin/node
 image=webui
 name=webui
 network=webui
+port_host=8080
+port_target=8080
 restart=always
 user=nobody
 volume=${PWD}/webui/webui.js
@@ -101,11 +108,7 @@ volume_path=/webui/webui.js
 volume_files=${PWD}/webui/files/
 volume_files_path=/webui/files/
 volume_ops=ro
-volume_tmp_0=/usr/local/lib/python3.10/collections/__pycache__
-volume_tmp_1=/usr/local/lib/python3.10/encodings/__pycache__
-volume_tmp_2=/usr/local/lib/python3.10/importlib/__pycache__
-volume_tmp_3=/usr/local/lib/python3.10/__pycache__
 workdir=/webui/
-docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -v ${volume_files}:${volume_files_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
+docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --publish ${port_host}:${port_target} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -v ${volume_files}:${volume_files_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
 
 
