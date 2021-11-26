@@ -145,5 +145,43 @@ jobs:
           sleep 10
           done
 
-  #swarm:
-  #kubernetes:
+  swarm:
+    env:
+      branch: 2021-11-axia
+      github_repo: dockercoins
+      github_user: academiaonline-org
+      tag: latest
+    runs-on: ubuntu-18.04
+    steps:
+      - 
+        name: checkout
+        uses: actions/checkout@v2
+      -
+        name: build
+        run: |
+          for app in hasher redis rng worker
+          do
+          docker build -t ${app}:${tag} ${app}
+          done
+      -
+        name: build-webui
+        run: |
+          app=webui
+          docker pull academiaonline/dockercoins:2021-10-webui
+          docker tag academiaonline/dockercoins:2021-10-webui ${app}:${tag}
+      -
+        name: swarm-init
+        run: docker swarm init
+      -
+        name: stack-deploy
+        run: docker stack deploy -c docker-compose.yaml dockercoins
+      -
+        name: test
+        run: |
+          while true
+          do
+          curl localhost:8080/index.html --silent | grep DockerCoin.Miner.WebUI && break
+          sleep 10
+          done
+
+#kubernetes:
