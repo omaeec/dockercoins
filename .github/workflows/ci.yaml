@@ -183,7 +183,7 @@ jobs:
         run: |
           while true
           do
-          docker service logs dockercoins_webui | grep WEBUI.running.on.port && break
+          docker service logs dockercoins_webui 2>& 1 | grep WEBUI.running.on.port && break
           sleep 10
           done         
       -
@@ -191,7 +191,7 @@ jobs:
         run: |
           while true
           do
-          docker service logs dockercoins_worker | grep Coin.found && break
+          docker service logs dockercoins_worker 2>& 1 | grep Coin.found && break
           sleep 10
           done
           
