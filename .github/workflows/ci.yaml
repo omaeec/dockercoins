@@ -179,13 +179,19 @@ jobs:
         name: stack-deploy
         run: docker stack deploy -c docker-compose.yaml dockercoins
       -
-        name: test
+        name: test-webui
         run: |
-          ip=$( ip r | grep default | awk '{ print $9 }' )
           while true
           do
-          curl ${ip}:8080/index.html --silent | grep DockerCoin.Miner.WebUI && break
-          curl ${ip}:8080/index.html --silent
+          docker service logs dockercoins_webui | grep WEBUI.running.on.port && break
+          sleep 10
+          done         
+      -
+        name: test-worker
+        run: |
+          while true
+          do
+          docker service logs dockercoins_worker | grep Coin.found && break
           sleep 10
           done
           
@@ -230,12 +236,19 @@ jobs:
         name: kube-deploy
         run: kubectl apply -f kube-compose.yaml 
       -
-        name: test
+        name: test-webui
         run: |
-          ip=$( ip route | grep default | awk '{ print $9 }' )
           while true
           do
-          curl ${ip}:30080/index.html --silent | grep DockerCoin.Miner.WebUI && break
-          curl ${ip}:30080/index.html --silent
+          kubectl logs service webui | grep WEBUI.running.on.port && break
+          sleep 10
+          done         
+      -
+        name: test-worker
+        run: |
+          while true
+          do
+          kubectl logs replicaset worker | grep Coin.found && break
           sleep 10
           done
+          
