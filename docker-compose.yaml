@@ -128,6 +128,8 @@ services:
     image: webui:latest
     networks:
       - webui
+    ports:
+      - 8080:8080
     user: nobody
     volumes:
       - 
