@@ -136,7 +136,14 @@ jobs:
           volume_ops=ro
           workdir=/webui/
           docker run -d --entrypoint ${entrypoint} --name ${name} --network ${network} --publish ${port_host}:${port_target} --read-only --restart ${restart} -u ${user} -v ${volume}:${volume_path}:${volume_ops} -v ${volume_files}:${volume_files_path}:${volume_ops} -w ${workdir} ${image}:${tag} ${cmd}
-        
+      -
+        name: test
+        run: |
+          while true
+          do
+          curl localhost:8080/index.html --silent | grep DockerCoin.Miner.WebUI && break
+          sleep 10
+          done
 
   #swarm:
   #kubernetes:
