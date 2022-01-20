@@ -18,11 +18,13 @@ redis = Redis("redis")
 
 
 def get_random_bytes():
+    # El servicio se puede mantener en puerto 80, ya que no se ataca al contenedor directamente
     r = requests.get("http://rng/32")
     return r.content
 
 
 def hash_bytes(data):
+    # El servicio se puede mantener en puerto 80, ya que no se ataca al contenedor directamente
     r = requests.post("http://hasher/",
                       data=data,
                       headers={"Content-Type": "application/octet-stream"})
