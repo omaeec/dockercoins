@@ -1,0 +1,244 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasher-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hasher
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: hasher
+        env: production
+        tier: backend
+    spec:
+      containers:
+        - 
+          args:
+            - hasher.rb
+          command:
+            - ruby
+          image: library/ruby:latest
+          name: hasher-container
+          ports:
+            - 
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            -
+              mountPath: /src/hasher.rb
+              name: hasher-volume
+              readOnly: true
+              subPath: hasher.rb
+          workingDir: /src/
+      volumes:
+        -
+          configMap:
+            defaultMode: 0400
+            items:
+              -
+                key: hasher.rb
+                mode: 0400
+                path: hasher.rb
+            name: hasher-cm
+          name: hasher-volume
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: rng-ds
+spec:
+  selector:
+    matchLabels:
+      app: rng
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: rng
+        env: production
+        tier: backend
+    spec:
+      containers:
+        - 
+          args:
+            - rng.py
+          command:
+            - python
+          image: library/python:latest
+          name: rng-container
+          ports:
+            - 
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            -
+              mountPath: /src/rng.py
+              name: rng-volume
+              readOnly: true
+              subPath: rng.py
+          workingDir: /src/
+      volumes:
+        -
+          configMap:
+            defaultMode: 0400
+            items:
+              -
+                key: rng.py
+                mode: 0400
+                path: rng.py
+            name: rng-cm
+          name: rng-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webui-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webui
+      env: production
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: webui
+        env: production
+        tier: frontend
+    spec:
+      containers:
+        - 
+          args:
+            - webui.js
+          command:
+            - node
+          image: library/node:latest
+          name: webui-container
+          ports:
+            - 
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            -
+              mountPath: /src/webui.js
+              name: hasher-volume
+              readOnly: true
+              subPath: webui.js
+          workingDir: /src/
+      volumes:
+        -
+          configMap:
+            defaultMode: 0400
+            items:
+              -
+                key: webui.js
+                mode: 0400
+                path: webui.js
+            name: webui-cm
+          name: webui-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: worker
+        env: production
+        tier: backend
+    spec:
+      containers:
+        - 
+          args:
+            - worker.py
+          command:
+            - python
+          image: library/python:latest
+          name: worker-container
+          ports:
+            - 
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            -
+              mountPath: /src/worker.py
+              name: worker-volume
+              readOnly: true
+              subPath: worker.py
+          workingDir: /src/
+      volumes:
+        -
+          configMap:
+            defaultMode: 0400
+            items:
+              -
+                key: worker.py
+                mode: 0400
+                path: worker.py
+            name: worker-cm
+          name: worker-volume
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-sts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: worker
+        env: production
+        tier: backend
+    spec:
+      containers:
+        - 
+          args:
+            - worker.py
+          command:
+            - python
+          image: library/python:latest
+          name: worker-container
+          ports:
+            - 
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            -
+              mountPath: /src/worker.py
+              name: worker-volume
+              readOnly: true
+              subPath: worker.py
+          workingDir: /src/
+      volumes:
+        -
+          configMap:
+            defaultMode: 0400
+            items:
+              -
+                key: worker.py
+                mode: 0400
+                path: worker.py
+            name: worker-cm
+          name: worker-volume
+  volumeClaimTemplates:
